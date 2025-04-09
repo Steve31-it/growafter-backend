@@ -1,35 +1,35 @@
 require("dotenv").config();
 const express = require("express");
-const { connectDB } = require("./config/db");
-const lessonsRoutes = require("./routes/lessonsRoutes");
-const { logger } = require("./routes/logger");
 const cors = require("cors");
 const path = require("path");
 
-// Init Express
-const app = express();
-const port = process.env.PORT || 5001;
+const { connectDB } = require("./config/db");
+const lessonsRoutes = require("./routes/lessonsRoutes");
 
-// Connect to MongoDB
+const app = express();
+const port = process.env.PORT || 10000;
+
 connectDB();
 
-// Middleware
-app.use(cors());
+app.use(cors({
+  origin: ["http://127.0.0.1:5500"],
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: false
+}));
+
 app.use(express.json());
-app.use(logger);
 
 // Routes
 app.use("/api", lessonsRoutes);
 
-// Serve lesson images
+// Serve images
 app.use("/images", express.static(path.join(__dirname, "images")));
 
-// 404 handler
-app.use((req, res, next) => {
+// 404 fallback
+app.use((req, res) => {
   res.status(404).send("No file was found");
 });
 
-// Start server
 app.listen(port, () => {
-  console.log(`🚀 Growafter server running on port: ${port}`);
+  console.log(`🚀 GrowAfter backend running on port ${port}`);
 });
