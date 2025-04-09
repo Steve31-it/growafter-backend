@@ -1,11 +1,12 @@
 const { getDB } = require("../config/db");
 const { ObjectId } = require("mongodb");
 
-// get all lessons.
+// 📚 Get all lessons
 async function getAllLessons(req, res) {
   try {
     const db = getDB();
     const lessons = await db.collection("lessons").find({}).toArray();
+    console.log("✅ Lessons fetched:", lessons.length);
     res.json(lessons);
   } catch (err) {
     console.error("Error fetching lessons:", err.message);
@@ -13,123 +14,103 @@ async function getAllLessons(req, res) {
   }
 }
 
-// get a single lesson.
-
+// 📘 Get a single lesson by ID
 async function getALesson(req, res) {
   const lessonId = req.params.id;
   try {
     const db = getDB();
-    const lesson = await db
-      .collection("lessons")
-      .findOne({ _id: new ObjectId(lessonId) });
+    const lesson = await db.collection("lessons").findOne({ _id: new ObjectId(lessonId) });
     if (!lesson) {
-      return res.status(404).json({ error: "lesson not found" });
+      return res.status(404).json({ error: "Lesson not found" });
     }
     res.send(lesson);
   } catch (err) {
-    console.error("Error fetching the lesson", err.message);
-    res.status(500).json({ error: "Failed to fetch lessons " });
+    console.error("Error fetching the lesson:", err.message);
+    res.status(500).json({ error: "Failed to fetch the lesson" });
   }
 }
 
-// create a new order.
-
+// 🛒 Create a new order
 async function createOrder(req, res) {
   const orderData = req.body;
   try {
     const db = getDB();
-    const order = await db.collection("Order").insertOne(orderData);
-    res.send(order);
+    const result = await db.collection("orders").insertOne(orderData);
+    res.status(201).json({ message: "Order created", orderId: result.insertedId });
   } catch (err) {
-    console.error("Error creating the lesson", err.message);
+    console.error("Error creating order:", err.message);
     res.status(500).json({ error: "Failed to create order" });
   }
 }
 
-//update a lessons space.
-
+// 🔄 Update lesson spaces after booking
 async function updateSpaces(req, res) {
   const { id } = req.params;
   const { spaces } = req.body;
   try {
     const db = getDB();
-    const results = await db
-      .collection("lessons")
-      .updateOne(
-        { _id: new ObjectId(id) },
-        { $set: { spaces } },
-        { safe: true, multi: false }
-      );
-
-    res.send(results);
+    const result = await db.collection("lessons").updateOne(
+      { _id: new ObjectId(id) },
+      { $set: { spaces } }
+    );
+    res.json({ message: "Spaces updated", result });
   } catch (err) {
-    console.error("error updating the lesson", err.message);
-    res.status(500).json({ error: "Failed to update the lesson" });
+    console.error("Error updating spaces:", err.message);
+    res.status(500).json({ error: "Failed to update lesson spaces" });
   }
 }
 
-//update a lessons details.
-
+// 🧾 Update order data
 async function updateData(req, res) {
   const { id } = req.params;
   const updatedData = req.body;
   try {
     const db = getDB();
-
-    const results = await db
-      .collection("Order")
-      .updateOne(
-        { _id: new ObjectId(id) },
-        { $set: updatedData },
-        { safe: true, multi: false }
-      );
-
-    res.send(results);
+    const result = await db.collection("orders").updateOne(
+      { _id: new ObjectId(id) },
+      { $set: updatedData }
+    );
+    res.json({ message: "Order updated", result });
   } catch (err) {
-    console.error("error updating the lesson", err.message);
-    res.status(500).json({ error: "Failed to update the lesson" });
+    console.error("Error updating order:", err.message);
+    res.status(500).json({ error: "Failed to update order" });
   }
 }
 
-// search lessons.
-
+// 🔍 Search lessons by subject, location, price, or spaces
 async function searchALesson(req, res) {
   const query = req.query.q?.trim();
-  console.log(query);
-
   if (!query) {
     return res.status(400).json({ error: "Search query is required" });
   }
 
-  const db = getDB();
   try {
-    const results = await db
-      .collection("lessons")
-      .find({
-        $or: [
-          { subject: { $regex: query, $options: "i" } },
-          { location: { $regex: query, $options: "i" } },
-          { price: parseFloat(query) },
-          { spaces: parseInt(query) },
-        ],
-      })
-      .toArray();
+    const db = getDB();
+    const results = await db.collection("lessons").find({
+      $or: [
+        { subject: { $regex: query, $options: "i" } },
+        { location: { $regex: query, $options: "i" } },
+        { price: isNaN(query) ? null : parseFloat(query) },
+        { spaces: isNaN(query) ? null : parseInt(query) }
+      ]
+    }).toArray();
 
-    if (results.length === 0) {
+    if (!results.length) {
       return res.status(404).json({ message: "No matching lessons found" });
     }
 
     res.json(results);
-  } catch (error) {
-    console.error("Error performing search:", error);
-    res.status(500).json({ message: "Error performing search" });
+  } catch (err) {
+    console.error("Error performing search:", err.message);
+    res.status(500).json({ error: "Search failed" });
   }
 }
+
 module.exports = {
   getAllLessons,
   getALesson,
   createOrder,
   updateSpaces,
   updateData,
-  searchALesson,
+  searchALesson
 };
