@@ -19,13 +19,10 @@ app.use(cors({
 
 app.use(express.json());
 
-// Routes
-app.use("/api", lessonsRoutes);
+app.use("/api", lessonsRoutes); // ✅ Will break if lessonsRoutes is not a function (router)
 
-// Serve images
 app.use("/images", express.static(path.join(__dirname, "images")));
 
-// 404 fallback
 app.use((req, res) => {
   res.status(404).send("No file was found");
 });
