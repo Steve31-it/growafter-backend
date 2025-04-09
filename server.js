@@ -9,34 +9,42 @@ const lessonsRoutes = require("./routes/lessonsRoutes");
 const app = express();
 const port = process.env.PORT || 10000;
 
-// 🔌 Connect MongoDB
+// ✅ Connect to MongoDB
 connectDB();
 
-// 🌐 Allow CORS from GitHub Pages & local dev
+// ✅ CORS Configuration (Allow GitHub Pages + Localhost)
+const allowedOrigins = [
+  "http://127.0.0.1:5500",                   // local dev
+  "https://steve31-it.github.io"             // GitHub Pages
+];
+
 app.use(cors({
-  origin: [
-    "http://127.0.0.1:5500",                  // for local development
-    "https://steve31-it.github.io"           // for deployed GitHub frontend
-  ],
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
   methods: ["GET", "POST", "PUT", "DELETE"],
-  credentials: false
+  allowedHeaders: ["Content-Type"]
 }));
 
-// 🧠 Parse JSON requests
+// ✅ Parse JSON bodies
 app.use(express.json());
 
-// 📦 API Routes
+// ✅ API Routes
 app.use("/api", lessonsRoutes);
 
-// 🖼️ Serve uploaded/static images
+// ✅ Serve images from /images folder
 app.use("/images", express.static(path.join(__dirname, "images")));
 
-// ❌ Catch-all for unknown routes
+// ❌ 404 for other routes
 app.use((req, res) => {
   res.status(404).send("No file was found");
 });
 
-// 🚀 Start server
+// ✅ Start the server
 app.listen(port, () => {
   console.log(`🚀 GrowAfter backend running on port ${port}`);
 });
