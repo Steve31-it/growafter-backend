@@ -4,7 +4,7 @@ let client;
 let db;
 
 // ✅ Correct GrowAfter URI and DB name
-const uri = "mongodb+srv://steve:root>@cluster0.ei3fh.mongodb.net/";
+const uri = "mongodb+srv://steve:root3133@cluster0.ei3fh.mongodb.net/";
 const dbName = "GrowAfter";
 
 function connectDB() {
