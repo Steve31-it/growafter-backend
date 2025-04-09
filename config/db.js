@@ -3,8 +3,8 @@ const { MongoClient } = require("mongodb");
 let client;
 let db;
 
-// ✅ Correct GrowAfter URI and DB name
-const uri = "mongodb+srv://steve:root3133@cluster0.ei3fh.mongodb.net/";
+// ✅ Use environment variable from Render
+const uri = process.env.MONGODB_URI;
 const dbName = "GrowAfter";
 
 function connectDB() {
@@ -29,3 +29,10 @@ function getDB() {
 }
 
 module.exports = { connectDB, getDB };
+// Compare this snippet from backend/controllers/lessonControllers.js:
+//   console.error("Error updating spaces:", err.message);
+//     res.status(500).json({ error: "Failed to update lesson spaces" });
+//   }
+// }
+//
+// // 🔄 Update order data
