@@ -1,11 +1,29 @@
 {
+  "name": "backend",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Steve31-it/growafter-backend.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Steve31-it/growafter-backend/issues"
+  },
+  "homepage": "https://github.com/Steve31-it/growafter-backend#readme",
+  "description": "",
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  },
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^5.1.0",
-    "mongoose": "^8.13.2"
-  },
-  "devDependencies": {
-    "nodemon": "^3.1.9"
+    "mongodb": "^6.15.0"
   }
 }

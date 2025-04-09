@@ -9,17 +9,39 @@ const {
 } = require("../controllers/lessonControllers");
 
 const router = express.Router();
-
+//testing.
 router.get("/test", (req, res) => {
-  res.send("✅ Test route is working.");
+  res.send("test route is working ");
 });
 
+// // get all lessons.
 router.get("/lessons", getAllLessons);
-router.get("/search", searchALesson);
-router.get("/lessons/:id", getALesson);
-router.post("/lessons/order", createOrder);
-router.put("/lessons/:id", updateSpaces);
-router.put("/lessons/order/:id", updateData);
 
-// ✅ MUST export only `router` not { router }
+// //get a single lesson by id.
+
+router.get("/lessons/:id", getALesson);
+
+// // post a new order.
+router.post("/lessons/order", createOrder);
+
+// // update a lesson space.
+
+router.put("/lessons/:id", updateSpaces);
+
+// //update a order data.
+
+router.put("/lessons/order/:id", updateData);
+//search for lessons.
+
+router.get("/search", searchALesson);
+
 module.exports = router;
+//   );
+//     res.json(results);
+//   } catch (err) {
+//     console.error("Error updating lesson spaces:", err.message);
+//     res.status(500).json({ error: "Failed to update lesson spaces" });
+    //   }
+//   }
+// }  catch (err) {
+//     console.error("Error searching for lessons:", err.message);    

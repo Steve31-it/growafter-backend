@@ -3,16 +3,17 @@ const { MongoClient } = require("mongodb");
 let client;
 let db;
 
-// ✅ Use environment variable from Render
-const uri = process.env.MONGODB_URI;
+// ✅ Correct Skillora URI and DB name
+const uri = "mongodb+srv://steve:root3133@cluster0.ei3fh.mongodb.net/";
 const dbName = "GrowAfter";
+// ✅ Connect to MongoDB
 
 function connectDB() {
   client = new MongoClient(uri);
   return client
     .connect()
     .then(() => {
-      console.log("✅ MongoDB connected to GrowAfter database");
+      console.log("✅ MongoDB connected to Skillora database");
       db = client.db(dbName);
     })
     .catch((err) => {
@@ -29,10 +30,3 @@ function getDB() {
 }
 
 module.exports = { connectDB, getDB };
-// Compare this snippet from backend/controllers/lessonControllers.js:
-//   console.error("Error updating spaces:", err.message);
-//     res.status(500).json({ error: "Failed to update lesson spaces" });
-//   }
-// }
-//
-// // 🔄 Update order data
